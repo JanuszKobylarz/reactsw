@@ -51,9 +51,18 @@ class SearchForm extends React.Component {
 
     handleSubmit(event) {
         fetch(this.apiurl + this.state.searchPhrase, {
-            method: "GET"
-        }).then(res => res.json())
-            .then(
+            method: "GET",
+            headers: {
+                'X-AUTH-TOKEN':'hbyqfqfrjmggtbhy2v83d342t'
+            }
+        }).then((res) => {
+            if(res.ok){
+                return res.json();
+            }else{
+                console.log(res);
+                throw new Error(res.statusText);
+            }
+        }).then(
                 (result) => {
                     if (!result) {
                         this.setState({
@@ -74,10 +83,10 @@ class SearchForm extends React.Component {
                     this.setState({
                         isLoaded: true,
                         results: false,
-                        error: "Generic error"
+                        error: error.message
                     });
                 }
-            )
+            );
 
         event.preventDefault();
 
@@ -94,7 +103,7 @@ class SearchForm extends React.Component {
                         <input className="form-control" type="text" value={this.state.searchPhrase}
                                onChange={this.handleChange}/>
                         <input className="btn btn-primary" type="submit" value="Submit"/>
-                        <div className="error">{this.state.error}</div>
+                        <div className="alert-danger">{this.state.error}</div>
                         <Results data={this.state}/>
                     </form>
                 </div>
@@ -119,7 +128,7 @@ function Results(state) {
                 </tr>
                 <tr>
                     <td>Mass</td>
-                    <td>person.mass}</td>
+                    <td>{person.mass}</td>
                 </tr>
                 <tr>
                     <td>Hair color</td>
